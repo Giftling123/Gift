@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To My Valentine 💌</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f9f3f3;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+        }
+
+        .envelope {
+            width: 400px;
+            height: 300px;
+            position: relative;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+            .envelope .body {
+                width: 100%;
+                height: 100%;
+                background: #ffcccc;
+                border: 2px solid #ff4d4d;
+                border-radius: 0 0 10px 10px;
+                position: relative;
+                z-index: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.5rem;
+                color: #ff4d4d;
+                text-align: center;
+            }
+
+            .envelope .flap {
+                width: 0;
+                height: 0;
+                border-left: 200px solid transparent;
+                border-right: 200px solid transparent;
+                border-top: 150px solid #ff8080;
+                position: absolute;
+                top: 0;
+                transform-origin: top;
+                transition: transform 0.5s ease-in-out;
+                z-index: 2;
+            }
+
+            .envelope.open .flap {
+                transform: rotateX(180deg);
+            }
+
+        .letter {
+            width: 120%;
+            max-height: 0;
+            background: #fff;
+            position: absolute;
+            top: 100%;
+            left: -10%;
+            padding: 0 20px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 0;
+            opacity: 0;
+            overflow-y: auto;
+            transition: all 0.5s ease-in-out 0.3s;
+        }
+
+        .envelope.open .letter {
+            max-height: 600px;
+            opacity: 1;
+            padding: 20px;
+            top: -50%;
+            z-index: 3;
+        }
+
+        .letter h1 {
+            color: #ff4d4d;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .letter p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+            text-align: justify;
+            margin: 0 0 20px 0;
+        }
+
+        .letter .signature {
+            text-align: right;
+            margin-top: 30px;
+            font-style: italic;
+            color: #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope" id="envelope">
+        <div class="body">💖To my valentine💖</div>
+        <div class="flap"></div>
+        <div class="letter">
+            <h1>To My Lovely Noons</h1>
+            <p>
+                My love, words cannot express how much you mean to me. From the moment you came into my life, everything has been brighter, warmer, and more beautiful. Your smile is my sunshine, your laughter is my favorite melody, and your love is the greatest gift I have ever received.
+            </p>
+            <p>
+                I appreciate every little thing about you, my pumpkin. Your kindness, your strength, your intelligence, and the way you make me feel like the luckiest person in the world. You are my everything, and I am so grateful to have you by my side.
+            </p>
+            <p>
+                I promise to cherish you, support you, and love you with all my heart, today and always. Thank you for being my Valentine, my partner, and my best friend. I love you more than words can say, my nonoty.
+            </p>
+            <p>
+                Every moment with you feels like a dream, and I never want to wake up. You are my everything, my mommy, my kitten, my nono, my nonoty, my love, my nona, my noni, my sweets~, and I am so grateful to have you in my life. I look forward to creating countless more memories with you, and I can't wait to see what the future holds for us.
+            </p>
+            <p>
+                You are my pumpkin, my inspiration, and my greatest joy. I love you more than anything in this world, my love, and I will always be here for you, no matter what. Thank you for being you, and for loving me the way you do.
+            </p>
+            <p>
+                My noni, you are the light of my life, the beat of my heart, and the reason I smile every day. I cherish every moment we spend together, and I am so excited to spend my entire life with you. You are my forever and always, my mommity.
+            </p>
+            <p>
+                My pumpkin, you are my safe place, and my home. No matter where life takes us, I know that as long as I have you by my side, everything will be okay. I love you more than words can ever express, my love.
+            </p>
+            <div class="signature">
+                Forever yours,<br>
+                Momo~
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+
+        envelope.addEventListener('click', () => {
+            envelope.classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

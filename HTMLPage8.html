@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe6e6;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            font-size: 3rem;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        #yes {
+            background-color: #ff8080;
+            color: white;
+        }
+
+            #yes:hover {
+                background-color: #ff4d4d;
+            }
+
+        #no {
+            background-color: #cccccc;
+            color: #666666;
+            position: relative;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            display: none;
+        }
+
+        .countdown {
+            font-size: 1.2rem;
+            color: #ff4d4d;
+            margin-top: 10px;
+        }
+
+        #manual-redirect {
+            display: none;
+            background-color: #ff4d4d;
+            color: white;
+            margin-top: 20px;
+        }
+
+            #manual-redirect:hover {
+                background-color: #ff8080;
+            }
+    </style>
+    <script>
+        function moveButton(event) {
+            const button = document.getElementById('no');
+            const cursorX = event.clientX;
+            const cursorY = event.clientY;
+            const offsetX = (Math.random() - 0.5) * 100;
+            const offsetY = (Math.random() - 0.5) * 100;
+            button.style.transition = 'transform 0.3s ease';
+            button.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        }
+
+        function startCountdown() {
+            const message = document.getElementById('message');
+            const countdown = document.getElementById('countdown');
+            const manualRedirect = document.getElementById('manual-redirect');
+            let timeLeft = 5;
+
+            message.style.display = 'block';
+            message.textContent = "Then prove yourself... Complete the challenges to win my heart! 💖";
+            manualRedirect.style.display = 'block';
+
+            const countdownInterval = setInterval(() => {
+                countdown.textContent = `Time left: ${timeLeft} seconds`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(countdownInterval);
+                    countdown.textContent = "Time's up! Let's begin the challenges!";
+                    window.location.href = 'HTMLPage3.html';
+                }
+            }, 1000);
+        }
+
+        function redirectManually() {
+            window.location.href = 'HTMLPage3.html';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Be My Valentine?</h1>
+        <button id="yes" onclick="startCountdown()">Yes</button>
+        <button id="no" onmouseover="moveButton(event)">No</button>
+        <div id="message" class="message"></div>
+        <div id="countdown" class="countdown"></div>
+        <button id="manual-redirect" onclick="redirectManually()">Let's Begin the Challenges!</button>
+    </div>
+</body>
+</html>

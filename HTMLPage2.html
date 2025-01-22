@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect 4 💖</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe6e6;
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(7, 60px);
+            grid-template-rows: repeat(6, 60px);
+            gap: 5px;
+            background-color: #ff4d4d;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            background-color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+            .cell.player {
+                background-color: #ff8080;
+            }
+
+            .cell.computer {
+                background-color: #cccccc;
+            }
+
+        .message {
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            margin-top: 20px;
+        }
+
+        .score {
+            font-size: 1.2rem;
+            color: #ff4d4d;
+            margin-top: 10px;
+        }
+
+        .next-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff4d4d;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none;
+            margin-top: 20px;
+        }
+
+            .next-button:hover {
+                background-color: #ff8080;
+            }
+
+        .turn-indicator {
+            font-size: 1.2rem;
+            color: #ff4d4d;
+            margin-bottom: 10px;
+        }
+
+        .floating-heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4d4d;
+            transform: rotate(-45deg);
+            animation: float 5s linear infinite;
+        }
+
+            .floating-heart::before,
+            .floating-heart::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background-color: #ff4d4d;
+                border-radius: 50%;
+            }
+
+            .floating-heart::before {
+                top: -10px;
+                left: 0;
+            }
+
+            .floating-heart::after {
+                top: 0;
+                left: 10px;
+            }
+
+        .floating-rose {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('rose.png');
+            background-size: cover;
+            animation: float 5s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-20vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Connect 4 💖</h1>
+    <div class="turn-indicator" id="turn-indicator">Your turn!</div>
+    <div class="board" id="board"></div>
+    <div class="message" id="message"></div>
+    <div class="score" id="score"></div>
+    <button class="next-button" id="next-button">I'm proud of you sweetheart~ and I love you</button>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const messageElement = document.getElementById('message');
+        const scoreElement = document.getElementById('score');
+        const nextButton = document.getElementById('next-button');
+        const turnIndicator = document.getElementById('turn-indicator');
+
+        let board = Array(6).fill().map(() => Array(7).fill(null));
+        let playerScore = 0;
+        let computerScore = 0;
+        let isPlayerTurn = true;
+
+        function createBoard() {
+            boardElement.innerHTML = '';
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 7; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    cell.addEventListener('click', handleCellClick);
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+
+        function handleCellClick(event) {
+            if (!isPlayerTurn) return;
+
+            const col = event.target.dataset.col;
+            const row = getLowestEmptyRow(col);
+
+            if (row === -1) return;
+
+            board[row][col] = 'player';
+            updateBoard();
+            if (checkWin('player')) {
+                playerScore++;
+                updateScore();
+                if (playerScore === 2) {
+                    messageElement.textContent = 'You win the game! The last letter is "A".';
+                    nextButton.style.display = 'block';
+                    explodeHearts();
+                    startRoseAnimation();
+                    endGame();
+                } else {
+                    messageElement.textContent = 'You win this round!';
+                    resetBoard();
+                }
+                return;
+            }
+
+            if (checkDraw()) {
+                messageElement.textContent = 'It\'s a draw!';
+                resetBoard();
+                return;
+            }
+
+            isPlayerTurn = false;
+            turnIndicator.textContent = "Computer's turn...";
+            setTimeout(computerMove, 1000);
+        }
+
+        function computerMove() {
+            const col = getRandomColumn();
+            const row = getLowestEmptyRow(col);
+
+            if (row === -1) return;
+
+            board[row][col] = 'computer';
+            updateBoard();
+            if (checkWin('computer')) {
+                computerScore++;
+                updateScore();
+                if (computerScore === 2) {
+                    messageElement.textContent = 'Computer wins the game!';
+                    endGame();
+                } else {
+                    messageElement.textContent = 'Computer wins this round!';
+                    resetBoard();
+                }
+                return;
+            }
+
+            if (checkDraw()) {
+                messageElement.textContent = 'It\'s a draw!';
+                resetBoard();
+                return;
+            }
+
+            isPlayerTurn = true;
+            turnIndicator.textContent = "Your turn!";
+        }
+
+        function getLowestEmptyRow(col) {
+            for (let row = 5; row >= 0; row--) {
+                if (!board[row][col]) return row;
+            }
+            return -1;
+        }
+
+        function getRandomColumn() {
+            let col;
+            do {
+                col = Math.floor(Math.random() * 7);
+            } while (board[0][col]);
+            return col;
+        }
+
+        function checkWin(player) {
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 4; col++) {
+                    if (
+                        board[row][col] === player &&
+                        board[row][col + 1] === player &&
+                        board[row][col + 2] === player &&
+                        board[row][col + 3] === player
+                    ) {
+                        return true;
+                    }
+                }
+            }
+
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 7; col++) {
+                    if (
+                        board[row][col] === player &&
+                        board[row + 1][col] === player &&
+                        board[row + 2][col] === player &&
+                        board[row + 3][col] === player
+                    ) {
+                        return true;
+                    }
+                }
+            }
+
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 4; col++) {
+                    if (
+                        board[row][col] === player &&
+                        board[row + 1][col + 1] === player &&
+                        board[row + 2][col + 2] === player &&
+                        board[row + 3][col + 3] === player
+                    ) {
+                        return true;
+                    }
+                }
+            }
+
+            for (let row = 3; row < 6; row++) {
+                for (let col = 0; col < 4; col++) {
+                    if (
+                        board[row][col] === player &&
+                        board[row - 1][col + 1] === player &&
+                        board[row - 2][col + 2] === player &&
+                        board[row - 3][col + 3] === player
+                    ) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        function checkDraw() {
+            return board.every(row => row.every(cell => cell));
+        }
+
+        function updateBoard() {
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 7; col++) {
+                    const cell = boardElement.children[row * 7 + col];
+                    if (board[row][col] === 'player') {
+                        cell.classList.add('player');
+                    } else if (board[row][col] === 'computer') {
+                        cell.classList.add('computer');
+                    }
+                }
+            }
+        }
+
+        function updateScore() {
+            scoreElement.textContent = `You: ${playerScore} | Computer: ${computerScore}`;
+        }
+
+        function resetBoard() {
+            board = Array(6).fill().map(() => Array(7).fill(null));
+            createBoard();
+            isPlayerTurn = true;
+            turnIndicator.textContent = "Your turn!";
+        }
+
+        function endGame() {
+            boardElement.removeEventListener('click', handleCellClick);
+        }
+
+        function explodeHearts() {
+            for (let i = 0; i < 100; i++) {
+                const heart = document.createElement("div");
+                heart.classList.add("floating-heart");
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+                document.body.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 5000);
+            }
+        }
+
+        function createFloatingRoses() {
+            const rose = document.createElement("div");
+            rose.classList.add("floating-rose");
+            rose.style.left = Math.random() * 100 + "vw";
+            rose.style.animationDuration = Math.random() * 2 + 3 + "s";
+            document.body.appendChild(rose);
+
+            setTimeout(() => rose.remove(), 5000);
+        }
+
+        function startRoseAnimation() {
+            setInterval(createFloatingRoses, 300);
+        }
+
+        function goToNextPage() {
+            window.location.href = 'HTMLPage6.html';
+        }
+
+        nextButton.addEventListener('click', goToNextPage);
+
+        createBoard();
+    </script>
+</body>
+</html>

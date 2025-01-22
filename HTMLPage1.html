@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors 💖</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe6e6;
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .choices {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+            .choices button {
+                padding: 15px 30px;
+                font-size: 1.2rem;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                background-color: #ff8080;
+                color: white;
+                transition: background-color 0.2s;
+            }
+
+                .choices button:hover {
+                    background-color: #ff4d4d;
+                }
+
+        .result {
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 1.2rem;
+            color: #ff4d4d;
+            margin-bottom: 20px;
+        }
+
+        .reset-button, .next-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff4d4d;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none;
+            margin: 10px;
+        }
+
+            .reset-button:hover, .next-button:hover {
+                background-color: #ff8080;
+            }
+
+        .floating-heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4d4d;
+            transform: rotate(-45deg);
+            animation: float 5s linear infinite;
+        }
+
+            .floating-heart::before,
+            .floating-heart::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background-color: #ff4d4d;
+                border-radius: 50%;
+            }
+
+            .floating-heart::before {
+                top: -10px;
+                left: 0;
+            }
+
+            .floating-heart::after {
+                top: 0;
+                left: 10px;
+            }
+
+        .floating-rose {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('rose.png');
+            background-size: cover;
+            animation: float 5s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-20vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Rock Paper Scissors 💖</h1>
+    <div class="choices">
+        <button id="rock">🪨 Rock</button>
+        <button id="paper">📄 Paper</button>
+        <button id="scissors">✂️ Scissors</button>
+    </div>
+    <div class="result" id="result"></div>
+    <div class="score" id="score"></div>
+    <button class="reset-button" id="reset-button">Play Again</button>
+    <button class="next-button" id="next-button">AHHHH! You are so good! Your next letter is M.</button>
+
+    <script>
+        const rockButton = document.getElementById('rock');
+        const paperButton = document.getElementById('paper');
+        const scissorsButton = document.getElementById('scissors');
+        const resultDiv = document.getElementById('result');
+        const scoreDiv = document.getElementById('score');
+        const resetButton = document.getElementById('reset-button');
+        const nextButton = document.getElementById('next-button');
+
+        let playerScore = 0;
+        let computerScore = 0;
+
+        function getComputerChoice() {
+            const choices = ['🪨 Rock', '📄 Paper', '✂️ Scissors'];
+            const randomIndex = Math.floor(Math.random() * 3);
+            return choices[randomIndex];
+        }
+
+        function determineWinner(playerChoice, computerChoice) {
+            if (playerChoice === computerChoice) {
+                return 'It\'s a tie!';
+            } else if (
+                (playerChoice === '🪨 Rock' && computerChoice === '✂️ Scissors') ||
+                (playerChoice === '📄 Paper' && computerChoice === '🪨 Rock') ||
+                (playerChoice === '✂️ Scissors' && computerChoice === '📄 Paper')
+            ) {
+                playerScore++;
+                return 'You win this round!';
+            } else {
+                computerScore++;
+                return 'Computer wins this round!';
+            }
+        }
+
+        function updateScore() {
+            scoreDiv.textContent = `You: ${playerScore} | Computer: ${computerScore}`;
+
+            if (playerScore === 3) {
+                resultDiv.textContent = 'You win the game! 💖';
+                nextButton.style.display = 'block';
+                explodeHearts();
+                endGame();
+            } else if (computerScore === 3) {
+                resultDiv.textContent = 'Computer wins the game! 😢';
+                resetButton.style.display = 'block';
+                endGame();
+            }
+        }
+
+        function endGame() {
+            rockButton.disabled = true;
+            paperButton.disabled = true;
+            scissorsButton.disabled = true;
+        }
+
+        function resetGame() {
+            playerScore = 0;
+            computerScore = 0;
+            resultDiv.textContent = '';
+            scoreDiv.textContent = '';
+            rockButton.disabled = false;
+            paperButton.disabled = false;
+            scissorsButton.disabled = false;
+            resetButton.style.display = 'none';
+            nextButton.style.display = 'none';
+        }
+
+        function explodeHearts() {
+            for (let i = 0; i < 100; i++) {
+                const heart = document.createElement("div");
+                heart.classList.add("floating-heart");
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+                document.body.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 5000);
+            }
+        }
+
+        function createFloatingRoses() {
+            const rose = document.createElement("div");
+            rose.classList.add("floating-rose");
+            rose.style.left = Math.random() * 100 + "vw";
+            rose.style.animationDuration = Math.random() * 2 + 3 + "s";
+            document.body.appendChild(rose);
+
+            setTimeout(() => rose.remove(), 5000);
+        }
+
+        function startRoseAnimation() {
+            setInterval(createFloatingRoses, 300);
+        }
+
+        function goToNextPage() {
+            window.location.href = 'HTMLPage2.html';
+        }
+
+        rockButton.addEventListener('click', () => playRound('🪨 Rock'));
+        paperButton.addEventListener('click', () => playRound('📄 Paper'));
+        scissorsButton.addEventListener('click', () => playRound('✂️ Scissors'));
+        resetButton.addEventListener('click', resetGame);
+        nextButton.addEventListener('click', goToNextPage);
+
+        function playRound(playerChoice) {
+            const computerChoice = getComputerChoice();
+            const result = determineWinner(playerChoice, computerChoice);
+            resultDiv.textContent = `You chose ${playerChoice}, computer chose ${computerChoice}. ${result}`;
+            updateScore();
+        }
+        startRoseAnimation();
+    </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture the Heart! 💖</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #ffe6e6;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .maze-container {
+            display: grid;
+            grid-template-columns: repeat(20, 20px);
+            grid-template-rows: repeat(20, 20px);
+            gap: 2px;
+            background: #ffcccc;
+            padding: 10px;
+            border: 2px solid #ff4d4d;
+            border-radius: 10px;
+        }
+
+        .cell {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .wall {
+            background: #ff4d4d;
+        }
+
+        .player {
+            background: #6bf0ff;
+            border-radius: 50%;
+            font-size: 12px;
+        }
+
+        .heart {
+            background: #ff4d4d;
+            color: white;
+            font-size: 14px;
+            border-radius: 50%;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            display: none;
+            text-align: center;
+        }
+
+        .floating-rose {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('rose.png');
+            background-size: cover;
+            animation: float 5s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-20vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4d4d;
+            transform: rotate(-45deg);
+            animation: float 5s linear infinite;
+        }
+
+            .floating-heart::before,
+            .floating-heart::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background-color: #ff4d4d;
+                border-radius: 50%;
+            }
+
+            .floating-heart::before {
+                top: -10px;
+                left: 0;
+            }
+
+            .floating-heart::after {
+                top: 0;
+                left: 10px;
+            }
+
+        .floating-sad-face {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            font-size: 24px;
+            animation: float 5s linear infinite;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+
+            .buttons button {
+                padding: 10px 20px;
+                font-size: 1rem;
+                margin: 5px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                background-color: #ff4d4d;
+                color: white;
+            }
+
+                .buttons button:hover {
+                    background-color: #ff8080;
+                }
+    </style>
+</head>
+<body>
+    <h1>Capture the Heart! 💖</h1>
+    <div class="maze-container" id="maze"></div>
+    <div class="message" id="message">You really love me?! <br />Anyways... here is a letter "N" what you do with it is... I don't know hehehe.... 💖</div>
+    <div class="buttons" id="buttons">
+        <button id="ask-button">Go out with me?</button>
+        <button id="no-button">No</button>
+    </div>
+
+    <script>
+        const mazeLayout = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+
+        const mazeContainer = document.getElementById("maze");
+        const message = document.getElementById("message");
+        const buttons = document.getElementById("buttons");
+        const askButton = document.getElementById("ask-button");
+        const noButton = document.getElementById("no-button");
+
+        let playerPosition = { x: 1, y: 1 };
+        let heartPosition = { x: 18, y: 18 };
+
+        function generateMaze() {
+            mazeContainer.innerHTML = "";
+            for (let y = 0; y < mazeLayout.length; y++) {
+                for (let x = 0; x < mazeLayout[y].length; x++) {
+                    const cell = document.createElement("div");
+                    cell.classList.add("cell");
+
+                    if (mazeLayout[y][x] === 1) {
+                        cell.classList.add("wall");
+                    } else if (x === playerPosition.x && y === playerPosition.y) {
+                        cell.classList.add("player");
+                        cell.textContent = "😊";
+                    } else if (x === heartPosition.x && y === heartPosition.y) {
+                        cell.classList.add("heart");
+                        cell.textContent = "❤️";
+                    }
+
+                    mazeContainer.appendChild(cell);
+                }
+            }
+        }
+
+        function movePlayer(dx, dy) {
+            const newX = playerPosition.x + dx;
+            const newY = playerPosition.y + dy;
+
+            if (
+                newX >= 0 &&
+                newY >= 0 &&
+                newX < mazeLayout[0].length &&
+                newY < mazeLayout.length &&
+                mazeLayout[newY][newX] !== 1
+            ) {
+                playerPosition.x = newX;
+                playerPosition.y = newY;
+
+                if (playerPosition.x === heartPosition.x && playerPosition.y === heartPosition.y) {
+                    message.style.display = "block";
+                    buttons.style.display = "flex";
+                    explodeHearts();
+                }
+
+                generateMaze();
+            }
+        }
+
+        function explodeHearts() {
+            for (let i = 0; i < 100; i++) {
+                const heart = document.createElement("div");
+                heart.classList.add("floating-heart");
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+                document.body.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 5000);
+            }
+        }
+
+        function explodeSadFaces() {
+            for (let i = 0; i < 100; i++) {
+                const sadFace = document.createElement("div");
+                sadFace.classList.add("floating-sad-face");
+                sadFace.textContent = "😢";
+                sadFace.style.left = Math.random() * 100 + "vw";
+                sadFace.style.animationDuration = Math.random() * 2 + 3 + "s";
+                document.body.appendChild(sadFace);
+
+                setTimeout(() => sadFace.remove(), 5000);
+            }
+        }
+
+        function createFloatingRoses() {
+            const rose = document.createElement("div");
+            rose.classList.add("floating-rose");
+            rose.style.left = Math.random() * 100 + "vw";
+            rose.style.animationDuration = Math.random() * 2 + 3 + "s";
+            document.body.appendChild(rose);
+
+            setTimeout(() => rose.remove(), 5000);
+        }
+
+        function startRoseAnimation() {
+            setInterval(createFloatingRoses, 300);
+        }
+
+        noButton.addEventListener("click", () => {
+            explodeSadFaces(); 
+            noButton.style.display = "none"; 
+        });
+
+        askButton.addEventListener("click", () => {
+            window.location.href = "HTMLPage4.html";
+        });
+
+        document.addEventListener("keydown", (e) => {
+            switch (e.key) {
+                case "ArrowUp":
+                    movePlayer(0, -1);
+                    break;
+                case "ArrowDown":
+                    movePlayer(0, 1);
+                    break;
+                case "ArrowLeft":
+                    movePlayer(-1, 0);
+                    break;
+                case "ArrowRight":
+                    movePlayer(1, 0);
+                    break;
+            }
+        });
+
+        generateMaze();
+        startRoseAnimation();
+    </script>
+</body>
+</html>

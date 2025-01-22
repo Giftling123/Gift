@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💖</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #ffe6e6;
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-container {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .input-container input {
+                padding: 10px;
+                font-size: 1rem;
+                border: 2px solid #ff4d4d;
+                border-radius: 5px;
+                outline: none;
+                width: 200px;
+                text-align: center;
+            }
+
+            .input-container button {
+                padding: 10px 20px;
+                font-size: 1rem;
+                border: none;
+                border-radius: 5px;
+                background: #ff4d4d;
+                color: white;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+
+                .input-container button:hover {
+                    background: #ff8080;
+                }
+
+        .options {
+            display: none;
+            margin-top: 20px;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .options button {
+                padding: 10px 20px;
+                font-size: 1rem;
+                border: none;
+                border-radius: 5px;
+                background: #ff4d4d;
+                color: white;
+                cursor: pointer;
+                transition: background 0.3s ease;
+                width: 250px;
+            }
+
+                .options button:hover {
+                    background: #ff8080;
+                }
+
+        .floating-heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4d4d;
+            transform: rotate(-45deg);
+            animation: float 5s linear infinite;
+        }
+
+            .floating-heart::before,
+            .floating-heart::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background-color: #ff4d4d;
+                border-radius: 50%;
+            }
+
+            .floating-heart::before {
+                top: -10px;
+                left: 0;
+            }
+
+            .floating-heart::after {
+                top: 0;
+                left: 10px;
+            }
+
+        .floating-rose {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('rose.png');
+            background-size: cover;
+            animation: float 5s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-20vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .running-away {
+            position: absolute;
+            transition: all 0.5s ease;
+        }
+
+        .next-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: #ff4d4d;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: none; /* Initially hidden */
+            position: absolute; /* Position in the center */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+            .next-button:hover {
+                background: #ff8080;
+            }
+
+        .hidden {
+            display: none;
+        }
+
+        #accept-message {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <h1>Will You Be My Valentine? 💖</h1>
+        <div class="input-container">
+            <input type="text" id="letters-input" placeholder="Enter the letters...">
+            <button id="submit-letters">Submit</button>
+        </div>
+        <div class="options" id="options">
+            <button id="yes-button">Yes! I will be your valentine!</button>
+            <button id="no-button">No!</button>
+        </div>
+        <div id="accept-message" style="display: none;">
+            <p>Accept!</p>
+        </div>
+    </div>
+    <button id="next-button" class="next-button">Next. . . .</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const lettersInput = document.getElementById('letters-input');
+        const submitLettersButton = document.getElementById('submit-letters');
+        const optionsDiv = document.getElementById('options');
+        const yesButton = document.getElementById('yes-button');
+        const noButton = document.getElementById('no-button');
+        const acceptMessage = document.getElementById('accept-message');
+        const nextButton = document.getElementById('next-button');
+        const mainContent = document.getElementById('main-content');
+
+        submitLettersButton.addEventListener('click', () => {
+            const input = lettersInput.value.trim().toUpperCase();
+            if (input === "NAJMA") {
+                optionsDiv.style.display = "flex"; /* Changed to flex for centering */
+            } else {
+                alert("Incorrect letters! Try again.");
+            }
+        });
+
+        yesButton.addEventListener('click', () => {
+            explodeHearts();
+            explodeRoses();
+            alert("Yay! You made me the happiest person! I will wait for you wink wink~ 💖");
+
+            // Hide everything except the next button
+            mainContent.classList.add('hidden');
+            nextButton.style.display = "block";
+        });
+
+        noButton.addEventListener('click', () => {
+            noButton.classList.add('running-away');
+            noButton.style.position = 'absolute';
+            noButton.style.left = `${Math.random() * 80 + 10}%`;
+            noButton.style.top = `${Math.random() * 80 + 10}%`;
+            acceptMessage.style.display = "block";
+        });
+
+        acceptMessage.addEventListener('click', () => {
+            explodeHearts();
+            explodeRoses();
+            alert("Yay! You made me the happiest person! I will wait for you wink wink~ 💖");
+
+            mainContent.classList.add('hidden');
+            nextButton.style.display = "block";
+        });
+
+        nextButton.addEventListener('click', () => {
+            window.location.href = "HTMLPage9.html";
+        });
+
+        function explodeHearts() {
+            for (let i = 0; i < 100; i++) {
+                const heart = document.createElement("div");
+                heart.classList.add("floating-heart");
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+                document.body.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 5000);
+            }
+        }
+
+        function explodeRoses() {
+            for (let i = 0; i < 50; i++) {
+                const rose = document.createElement("div");
+                rose.classList.add("floating-rose");
+                rose.style.left = Math.random() * 100 + "vw";
+                rose.style.animationDuration = Math.random() * 2 + 3 + "s";
+                document.body.appendChild(rose);
+
+                setTimeout(() => rose.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
